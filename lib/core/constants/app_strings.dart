@@ -13,12 +13,20 @@ abstract final class AppStrings {
   static const String joinRoomTitle = 'Join A Room';
   static const String joinRoomBody =
       'Enter the code to join the anon chat room';
+  static const String joinRoomCta = 'Join room';
+  static const String joinRoomInvalidCode = 'Enter a valid 6-character code';
+  static const String joinRoomNotFound = 'Room not found';
+  static const String joinRoomGenericError = 'Something went wrong';
 
   static const String createRoomTitle = 'Create Room';
-  static const String createRoomSubtitle =
-      'Start a new anonymous conversation';
+  static const String createRoomSubtitle = 'Start a new anonymous conversation';
   static const String createRoomPreviewMock = 'Room #1234';
   static const String createRoomPrimaryCta = 'Create Room';
+  static const String createRoomCollisionError =
+      'Unable to create room. Try again.';
+  static const String createRoomUniqueNameFailed =
+      'Could not find an available room name. Try again.';
+  static const String createRoomPreviewRetry = 'Try again';
 
   static const String chatTitle = 'Room';
   static const String chatBody = 'Messages will appear here.';

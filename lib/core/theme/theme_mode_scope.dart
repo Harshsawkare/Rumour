@@ -13,8 +13,7 @@ class ThemeModeScope extends InheritedWidget {
   final ValueChanged<ThemeMode> setThemeMode;
 
   static ThemeModeScope of(BuildContext context) {
-    final scope =
-        context.dependOnInheritedWidgetOfExactType<ThemeModeScope>();
+    final scope = context.dependOnInheritedWidgetOfExactType<ThemeModeScope>();
     assert(scope != null, 'ThemeModeScope not found above context');
     return scope!;
   }

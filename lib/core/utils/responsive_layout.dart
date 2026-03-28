@@ -8,8 +8,7 @@ abstract final class ResponsiveLayout {
   static const double mediumWidthUpperBound = 900;
   static const double shortViewportUpperBound = 480;
 
-  static bool isCompactWidth(double width) =>
-      width < compactWidthUpperBound;
+  static bool isCompactWidth(double width) => width < compactWidthUpperBound;
 
   static bool isMediumWidth(double width) =>
       width >= compactWidthUpperBound && width < mediumWidthUpperBound;

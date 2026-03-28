@@ -26,28 +26,29 @@ abstract final class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'REPLACE_ME',
-    appId: '1:000000000000:web:0000000000000000000000',
-    messagingSenderId: '000000000000',
-    projectId: 'room-chat-placeholder',
-    authDomain: 'room-chat-placeholder.firebaseapp.com',
-    storageBucket: 'room-chat-placeholder.appspot.com',
+    apiKey: 'AIzaSyASlkUeFtz-3wacAfXU5D4cjRXBpvDwruQ',
+    appId: '1:888411305179:web:79eb72b72b1dbae83548fe',
+    messagingSenderId: '888411305179',
+    projectId: 'room-chat-5a0b1',
+    authDomain: 'room-chat-5a0b1.firebaseapp.com',
+    storageBucket: 'room-chat-5a0b1.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyPlaceholderReplaceWithFlutterFireConfigure000000',
-    appId: '1:000000000000:android:0000000000000000000000',
-    messagingSenderId: '000000000000',
-    projectId: 'room-chat-placeholder',
-    storageBucket: 'room-chat-placeholder.appspot.com',
+    apiKey: 'AIzaSyBohy8K4jedqXPPi_j_Afuf1gZFSX-bmXk',
+    appId: '1:888411305179:android:e295361145681e203548fe',
+    messagingSenderId: '888411305179',
+    projectId: 'room-chat-5a0b1',
+    storageBucket: 'room-chat-5a0b1.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'REPLACE_ME',
-    appId: '1:000000000000:ios:0000000000000000000000',
-    messagingSenderId: '000000000000',
-    projectId: 'room-chat-placeholder',
-    storageBucket: 'room-chat-placeholder.appspot.com',
+    apiKey: 'AIzaSyC_xrfCg_kyzR_vN1yNVNBSdJbOYLjNXXU',
+    appId: '1:888411305179:ios:401e5d9e24fdd22d3548fe',
+    messagingSenderId: '888411305179',
+    projectId: 'room-chat-5a0b1',
+    storageBucket: 'room-chat-5a0b1.firebasestorage.app',
     iosBundleId: 'com.example.roomChat',
   );
+
 }

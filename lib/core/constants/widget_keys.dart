@@ -10,6 +10,7 @@ abstract final class SplashKeys {
 abstract final class JoinRoomKeys {
   static const Key screen = Key('join_room_screen');
   static const Key navToCreateRoom = Key('join_room_nav_create_room');
+  static const Key joinCta = Key('join_room_join_cta');
 }
 
 abstract final class CreateRoomKeys {

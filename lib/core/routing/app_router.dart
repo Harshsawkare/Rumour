@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:room_chat/core/constants/app_route_paths.dart';
 import 'package:room_chat/core/constants/widget_keys.dart';
+import 'package:room_chat/core/routing/chat_route_args.dart';
 import 'package:room_chat/features/chat/presentation/screens/chat_screen.dart';
 import 'package:room_chat/features/room/presentation/screens/create_room_screen.dart';
 import 'package:room_chat/features/room/presentation/screens/join_room_screen.dart';
@@ -29,11 +30,16 @@ abstract final class AppRouter {
       case AppRoutePaths.chat:
         return MaterialPageRoute<void>(
           settings: settings,
-          builder: (_) => ChatScreen(
-            key: ChatKeys.screen,
-            roomCode:
-                settings.arguments is String ? settings.arguments as String : null,
-          ),
+          builder: (_) {
+            final args = settings.arguments;
+            if (args is! ChatRouteArgs) {
+              return const SplashScreen();
+            }
+            return ChatScreen(
+              key: ChatKeys.screen,
+              chatArgs: args,
+            );
+          },
         );
       default:
         return MaterialPageRoute<void>(

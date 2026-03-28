@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "000000000000",
-    "project_id": "room-chat-placeholder",
-    "storage_bucket": "room-chat-placeholder.appspot.com"
+    "project_number": "888411305179",
+    "project_id": "room-chat-5a0b1",
+    "storage_bucket": "room-chat-5a0b1.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+        "mobilesdk_app_id": "1:888411305179:android:e295361145681e203548fe",
         "android_client_info": {
           "package_name": "com.example.room_chat"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyPlaceholderReplaceWithFlutterFireConfigure000000"
+          "current_key": "AIzaSyBohy8K4jedqXPPi_j_Afuf1gZFSX-bmXk"
         }
       ],
       "services": {
