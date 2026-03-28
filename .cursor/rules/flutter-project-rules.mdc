@@ -1,0 +1,86 @@
+---
+description: Flutter project — Clean Architecture, BLoC, Firestore, UI standards, folder structure
+globs: "**/*.dart"
+alwaysApply: false
+---
+
+# Flutter Project Rules
+
+## Architecture
+
+- Follow **Clean Architecture**: layers `presentation` → `domain` → `data`; dependency direction only inward.
+- **No** direct dependency from `presentation` to `data`.
+- Strict separation of concerns.
+
+## State management (BLoC)
+
+- Use BLoC/Cubit for **all** business logic.
+- UI interacts **only** with BLoC—never with repositories or data sources directly.
+- Keep BLoCs small and single-responsibility; avoid heavy logic in widgets.
+
+## Data layer
+
+- Use **Firebase Firestore** as remote DB and local cache (offline where applicable).
+- Abstract all Firestore access behind **repositories**.
+- Use data models (**DTOs**) only in the data layer.
+- Convert **DTO → entity** before anything crosses into domain/presentation.
+
+## Domain layer
+
+- Contains **entities** (pure Dart) and **use cases** (business logic).
+- **No** Flutter, Firebase, or other framework/SDK imports.
+
+## Presentation layer
+
+- UI rendering only.
+- **Must not:** call Firestore, access repositories, or embed business rules in widgets.
+- **Should:** use BLoC for interactions and stay reactive to state changes.
+
+## Constants (strict)
+
+- No hardcoded strings, keys, or colors in widgets or business logic.
+- Centralize: `app_strings.dart`, `app_keys.dart`, `app_colors.dart`.
+
+## Theming
+
+- Central `ThemeData`; avoid inline styling where theme can express it.
+- Support light and dark mode; use theme extensions if needed.
+
+## Responsive design
+
+- Adapt for mobile, tablet, and web (including WebView).
+- Use `LayoutBuilder`, `MediaQuery`, and a breakpoints helper.
+- Example: mobile `< 600`, tablet `600–1024`, desktop/web `> 1024`.
+- Prefer flexible layouts over fixed pixel sizes.
+
+## Widgets
+
+- Reusable, small, composable; split into **screens** and **components** (or equivalent).
+
+## Code quality
+
+- Follow `flutter_lints` / `analysis_options.yaml`; clear naming; avoid duplication.
+
+## Strictly forbidden
+
+- Direct DB/API calls in UI; business logic in widgets; hardcoded strings/colors/keys; skipping domain; tight coupling between layers.
+
+## Best practices
+
+- Dependency injection; prefer immutability; **Equatable** for BLoC states/events where helpful; testable, scalable code.
+
+## Recommended folder structure
+
+```
+lib/
+├── core/
+│   ├── constants/
+│   ├── theme/
+│   └── utils/
+├── features/
+│   └── feature_name/
+│       ├── data/
+│       ├── domain/
+│       └── presentation/
+└── main.dart
+```
