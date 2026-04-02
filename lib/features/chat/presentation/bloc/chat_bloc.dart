@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:room_chat/core/services/visited_room_code_store.dart';
 import 'package:room_chat/core/utils/repository_result.dart';
 import 'package:room_chat/features/chat/domain/entities/room_message_entity.dart';
 import 'package:room_chat/features/chat/domain/repositories/chat_repository.dart';
@@ -203,6 +204,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         final p = data.participant;
         _isFirstTime = data.isNewParticipant;
         _self = p;
+        await VisitedRoomCodeStore.instance.remember(event.roomCode, event.roomId);
         _chatRepository.resetPaginationState();
 
         _messagesSub = _chatRepository

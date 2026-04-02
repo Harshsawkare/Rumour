@@ -208,6 +208,15 @@ class _ChatViewState extends State<_ChatView> {
     final bubbleColor = isMe ? colors.secondaryAccent : colors.textBg;
     final textColor = isMe ? colors.secondaryText1 : colors.primaryHeading2;
 
+    final timeLabel =
+        TimeOfDay.fromDateTime(message.createdAt).format(context);
+    final timeStyle = theme.textTheme.labelSmall?.copyWith(
+      fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) * 0.82,
+      height: 1.15,
+      color: textColor.withValues(alpha: 0.72),
+      fontWeight: FontWeight.w500,
+    );
+
     final bubble = DecoratedBox(
       decoration: BoxDecoration(
         color: bubbleColor,
@@ -223,23 +232,53 @@ class _ChatViewState extends State<_ChatView> {
           horizontal: AppSpacing.lg,
           vertical: AppSpacing.sm,
         ),
-        child: Text(
-          message.text,
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: textColor,
-            fontWeight: FontWeight.w400,
-          ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              message.text,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: textColor,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            SizedBox(height: AppSpacing.xs),
+            Text(timeLabel, style: timeStyle),
+            if (isMe && message.isPendingSync) ...[
+              SizedBox(height: AppSpacing.xs),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.cloud_off_outlined,
+                    size: (timeStyle?.fontSize ?? 11) * 1.1,
+                    color: textColor.withValues(alpha: 0.65),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    "Will send when you're online",
+                    style: (timeStyle ?? const TextStyle(fontSize: 11)).copyWith(
+                      fontStyle: FontStyle.italic,
+                      color: textColor.withValues(alpha: 0.72),
+                    ),
+                    textAlign: TextAlign.end,
+                  ),
+                ],
+              ),
+            ],
+          ],
         ),
       ),
     );
+
+    final maxBubbleWidth = MediaQuery.sizeOf(context).width * 0.78;
 
     if (isMe) {
       return Align(
         alignment: Alignment.centerRight,
         child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.sizeOf(context).width * 0.78,
-          ),
+          constraints: BoxConstraints(maxWidth: maxBubbleWidth),
           child: bubble,
         ),
       );
@@ -259,22 +298,27 @@ class _ChatViewState extends State<_ChatView> {
               : null,
         ),
         const SizedBox(width: AppSpacing.sm),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                child: Text(
-                  message.userName,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: colors.primarySubheading2,
-                    fontWeight: FontWeight.w600,
+        Flexible(
+          fit: FlexFit.loose,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxBubbleWidth),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                  child: Text(
+                    message.userName,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: colors.primarySubheading2,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              ),
-              bubble,
-            ],
+                bubble,
+              ],
+            ),
           ),
         ),
       ],
@@ -295,8 +339,13 @@ class _ChatViewState extends State<_ChatView> {
     for (var i = 0; i < ordered.length; i++) {
       if (i > 0) {
         if (!_isSameDay(ordered[i - 1].createdAt, ordered[i].createdAt)) {
+          // [ordered] is newest-first; the separator sits above the older row in
+          // build order but below it on screen (reverse list) — label the newer day.
           children.add(
-            _buildDateSeparator(context, _calendarDay(ordered[i].createdAt)),
+            _buildDateSeparator(
+              context,
+              _calendarDay(ordered[i - 1].createdAt),
+            ),
           );
         } else {
           children.add(const SizedBox(height: AppSpacing.sm));

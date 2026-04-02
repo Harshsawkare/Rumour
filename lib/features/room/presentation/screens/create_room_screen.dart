@@ -78,9 +78,7 @@ class _CreateRoomView extends StatelessWidget {
             }
           });
         } else if (state is RoomError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          _showCreateRoomAlert(context, state.message);
         }
       },
       builder: (context, state) {
@@ -130,16 +128,13 @@ class _CreateRoomView extends StatelessWidget {
                 _CreateButton(
                   borderRadius: primaryButtonRadius,
                   loading: submittingCreate,
-                  onPressed: switch (state) {
-                    RoomCreatePreviewReady(:final previewRoomName)
-                        when !submittingCreate &&
-                            !previewLoading &&
-                            !previewError =>
-                      () => context.read<RoomBloc>().add(
-                            CreateRoomRequested(previewRoomName),
-                          ),
-                    _ => null,
-                  },
+                  onPressed: submittingCreate
+                      ? null
+                      : _createRoomButtonAction(
+                          context,
+                          state,
+                          previewLoading,
+                        ),
                 ),
               ],
             ),
@@ -148,6 +143,64 @@ class _CreateRoomView extends StatelessWidget {
       },
     );
   }
+
+  /// Primary CTA stays tappable when preview failed (e.g. offline): shows [AlertDialog] instead of a dead button.
+  VoidCallback? _createRoomButtonAction(
+    BuildContext context,
+    RoomState state,
+    bool previewLoading,
+  ) {
+    if (previewLoading) {
+      return null;
+    }
+    if (state is RoomCreatePreviewLoadError) {
+      return () => _showCreateRoomAlert(context, state.message);
+    }
+    if (state is RoomCreatePreviewReady) {
+      final name = state.previewRoomName;
+      return () =>
+          context.read<RoomBloc>().add(CreateRoomRequested(name));
+    }
+    return null;
+  }
+}
+
+void _showCreateRoomAlert(BuildContext context, String message) {
+  final theme = Theme.of(context);
+  final colors = context.appColors;
+  final isNeedOnline = message == AppStrings.createRoomNeedOnline;
+  showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(
+        isNeedOnline
+            ? AppStrings.createRoomNeedOnlineTitle
+            : AppStrings.createRoomTitle,
+        style: theme.textTheme.titleLarge?.copyWith(
+          color: colors.primaryHeading1,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      content: Text(
+        message,
+        style: theme.textTheme.bodyLarge?.copyWith(
+          color: colors.primarySubheading1,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(),
+          child: Text(
+            MaterialLocalizations.of(ctx).okButtonLabel,
+            style: theme.textTheme.labelLarge?.copyWith(
+              color: colors.primaryAccent,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 class _HeaderSection extends StatelessWidget {

@@ -27,6 +27,9 @@ abstract final class AppStrings {
   static const String createRoomUniqueNameFailed =
       'Could not find an available room name. Try again.';
   static const String createRoomPreviewRetry = 'Try again';
+  static const String createRoomNeedOnline =
+      'Connect to the internet to create a room.';
+  static const String createRoomNeedOnlineTitle = 'Connection required';
 
   static const String chatTitle = 'Room';
   static const String chatBody = 'Messages will appear here.';

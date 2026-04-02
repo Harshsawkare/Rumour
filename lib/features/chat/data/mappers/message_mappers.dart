@@ -9,5 +9,6 @@ extension MessageModelMapper on MessageModel {
     userName: userName,
     avatar: avatar,
     createdAt: createdAt,
+    isPendingSync: isPendingSync,
   );
 }

@@ -9,6 +9,7 @@ final class RoomMessage extends Equatable {
     required this.userName,
     required this.avatar,
     required this.createdAt,
+    this.isPendingSync = false,
   });
 
   final String id;
@@ -18,6 +19,10 @@ final class RoomMessage extends Equatable {
   final String avatar;
   final DateTime createdAt;
 
+  /// Local snapshot before [FieldValue.serverTimestamp] resolves (e.g. offline send).
+  final bool isPendingSync;
+
   @override
-  List<Object?> get props => [id, text, userId, userName, avatar, createdAt];
+  List<Object?> get props =>
+      [id, text, userId, userName, avatar, createdAt, isPendingSync];
 }

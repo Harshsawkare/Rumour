@@ -12,6 +12,7 @@ final class MessageModel extends Equatable {
     required this.userName,
     required this.avatar,
     required this.createdAt,
+    this.isPendingSync = false,
   });
 
   final String id;
@@ -21,17 +22,32 @@ final class MessageModel extends Equatable {
   final String avatar;
   final DateTime createdAt;
 
+  /// True when [createdAt] was inferred locally (server time not in snapshot yet).
+  final bool isPendingSync;
+
   factory MessageModel.fromMap(String id, Map<String, dynamic> map) {
     final created = map[FirestoreFieldKeys.createdAt];
+    if (created is Timestamp) {
+      return MessageModel(
+        id: id,
+        text: map[FirestoreFieldKeys.text] as String? ?? '',
+        userId: map[FirestoreFieldKeys.userId] as String? ?? '',
+        userName: map[FirestoreFieldKeys.userName] as String? ?? '',
+        avatar: map[FirestoreFieldKeys.avatar] as String? ?? '',
+        createdAt: created.toDate(),
+        isPendingSync: false,
+      );
+    }
+    // Pending writes with serverTimestamp() often omit a Timestamp until sync — use "now"
+    // so ordering matches newest-at-bottom; epoch would sort as oldest and jump to the top.
     return MessageModel(
       id: id,
       text: map[FirestoreFieldKeys.text] as String? ?? '',
       userId: map[FirestoreFieldKeys.userId] as String? ?? '',
       userName: map[FirestoreFieldKeys.userName] as String? ?? '',
       avatar: map[FirestoreFieldKeys.avatar] as String? ?? '',
-      createdAt: created is Timestamp
-          ? created.toDate()
-          : DateTime.fromMillisecondsSinceEpoch(0),
+      createdAt: DateTime.now(),
+      isPendingSync: true,
     );
   }
 
@@ -46,5 +62,6 @@ final class MessageModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, text, userId, userName, avatar, createdAt];
+  List<Object?> get props =>
+      [id, text, userId, userName, avatar, createdAt, isPendingSync];
 }

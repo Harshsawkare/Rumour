@@ -5,6 +5,7 @@ import 'package:room_chat/core/constants/room_code_constants.dart';
 import 'package:room_chat/core/constants/room_name_constants.dart';
 import 'package:room_chat/core/services/device_id_service.dart';
 import 'package:room_chat/core/services/user_identity_service.dart';
+import 'package:room_chat/core/services/visited_room_code_store.dart';
 import 'package:room_chat/core/utils/repository_result.dart';
 import 'package:room_chat/features/room/domain/repositories/room_repository.dart';
 import 'package:room_chat/features/room/domain/use_cases/create_room_result.dart';
@@ -16,15 +17,19 @@ final class CreateRoomUseCase {
     required UserIdentityService identityService,
     DeviceIdService? deviceIdService,
     Random? random,
+    VisitedRoomCodeStore? visitedRoomCodeStore,
   })  : _roomRepository = roomRepository,
         _identityService = identityService,
         _deviceIdService = deviceIdService ?? DeviceIdService.instance,
-        _random = random ?? Random.secure();
+        _random = random ?? Random.secure(),
+        _visitedRoomCodeStore =
+            visitedRoomCodeStore ?? VisitedRoomCodeStore.instance;
 
   final RoomRepository _roomRepository;
   final UserIdentityService _identityService;
   final DeviceIdService _deviceIdService;
   final Random _random;
+  final VisitedRoomCodeStore _visitedRoomCodeStore;
 
   /// Picks a `Room #NNNN` label not yet used in Firestore (for the create-room preview).
   Future<RepositoryResult<String>> resolveUniqueRoomNameForPreview() async {
@@ -102,6 +107,7 @@ final class CreateRoomUseCase {
 
         switch (add) {
           case RepositorySuccess():
+            await _visitedRoomCodeStore.remember(room.roomCode, room.id);
             return CreateRoomSuccessResult(
               roomId: room.id,
               roomCode: room.roomCode,

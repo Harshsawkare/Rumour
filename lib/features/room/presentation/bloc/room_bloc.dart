@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:room_chat/core/constants/app_strings.dart';
+import 'package:room_chat/core/services/network_connectivity.dart';
 import 'package:room_chat/core/utils/repository_result.dart';
 import 'package:room_chat/features/room/domain/use_cases/create_room_result.dart';
 import 'package:room_chat/features/room/domain/use_cases/create_room_use_case.dart';
@@ -158,8 +160,10 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
   RoomBloc({
     required JoinRoomUseCase joinRoomUseCase,
     required CreateRoomUseCase createRoomUseCase,
+    Future<bool> Function()? isDeviceOnline,
   })  : _joinRoomUseCase = joinRoomUseCase,
         _createRoomUseCase = createRoomUseCase,
+        _isDeviceOnline = isDeviceOnline ?? NetworkConnectivity.isDeviceOnline,
         super(const RoomInitial()) {
     on<JoinRoomRequested>(_onJoinRoomRequested);
     on<CreateRoomPreviewRequested>(_onCreateRoomPreviewRequested);
@@ -169,6 +173,7 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
 
   final JoinRoomUseCase _joinRoomUseCase;
   final CreateRoomUseCase _createRoomUseCase;
+  final Future<bool> Function() _isDeviceOnline;
 
   Future<void> _onJoinRoomRequested(
     JoinRoomRequested event,
@@ -207,6 +212,10 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
     CreateRoomPreviewRequested event,
     Emitter<RoomState> emit,
   ) async {
+    if (!await _isDeviceOnline()) {
+      emit(const RoomCreatePreviewLoadError(AppStrings.createRoomNeedOnline));
+      return;
+    }
     emit(const RoomCreatePreviewLoading());
     final result = await _createRoomUseCase.resolveUniqueRoomNameForPreview();
     switch (result) {
@@ -222,6 +231,11 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
     Emitter<RoomState> emit,
   ) async {
     if (state is RoomLoading) {
+      return;
+    }
+    if (!await _isDeviceOnline()) {
+      emit(RoomError(AppStrings.createRoomNeedOnline));
+      emit(RoomCreatePreviewReady(event.previewRoomName));
       return;
     }
     emit(

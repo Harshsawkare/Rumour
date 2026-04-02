@@ -139,7 +139,12 @@ final class FirestoreService {
       if (trimmed.isEmpty) {
         return null;
       }
-      final snap = await _roomsCol().doc(trimmed).get();
+      final ref = _roomsCol().doc(trimmed);
+      final fromCache = await _getSnapshotPreferCache(ref);
+      if (fromCache != null) {
+        return RoomModel.fromMap(fromCache.id, fromCache.data()!);
+      }
+      final snap = await ref.get();
       if (!snap.exists || snap.data() == null) {
         return null;
       }
@@ -207,7 +212,12 @@ final class FirestoreService {
     required String deviceId,
   }) async {
     try {
-      final snap = await _participantsCol(roomId).doc(deviceId).get();
+      final ref = _participantsCol(roomId).doc(deviceId);
+      final fromCache = await _getSnapshotPreferCache(ref);
+      if (fromCache != null) {
+        return ParticipantModel.fromMap(deviceId, fromCache.data()!);
+      }
+      final snap = await ref.get();
       if (!snap.exists || snap.data() == null) {
         return null;
       }
@@ -215,6 +225,21 @@ final class FirestoreService {
     } catch (e, st) {
       throw DataLayerException('getParticipant failed', e, st);
     }
+  }
+
+  /// Uses [Source.cache] first so web/mobile show persisted data immediately; falls back to default [get].
+  Future<DocumentSnapshot<Map<String, dynamic>>?> _getSnapshotPreferCache(
+    DocumentReference<Map<String, dynamic>> ref,
+  ) async {
+    try {
+      final snap = await ref.get(const GetOptions(source: Source.cache));
+      if (snap.exists && snap.data() != null) {
+        return snap;
+      }
+    } on FirebaseException catch (_) {
+      // Cache miss or persistence not ready — fall through.
+    }
+    return null;
   }
 
   /// Atomically reads `participants/{deviceId}` and creates it only if absent (prevents duplicate / race overwrites).
