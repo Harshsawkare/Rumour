@@ -2,6 +2,9 @@
 
 Anonymous, room-code based chat for Flutter. Users join or create rooms with a code, chat in real time, and are identified by a generated profile (no accounts).
 
+APK: https://drive.google.com/file/d/1LHiJvtZnTTiMaHSXaju0gIYtQNStLinC/view?usp=drive_link
+Demo walkthrough: https://drive.google.com/file/d/11ziuphlWEzZPmzHEXJG70tf2wilm2oFW/view?usp=drive_link
+
 ## Stack
 
 - **Flutter** (Dart ^3.8), **Material 3** with light/dark theme and clamped text scaling
